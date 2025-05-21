@@ -31,17 +31,17 @@ def load_and_fix_cookies(filepath):
 # Scrape Upwork and return HTML content
 def scrape_upwork_with_cookies():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, slow_mo=100)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(
-            # user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            # viewport={"width": 1280, "height": 800}
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            viewport={"width": 1280, "height": 800}
         )
         cookies = load_and_fix_cookies("../upwork_cookies.json")
         context.add_cookies(cookies)
 
         page = context.new_page()
         page.goto("https://www.upwork.com/nx/search/jobs/?is_sts_vector_search_result=false&nav_dir=pop&q=crypto", timeout=25000)
-        page.wait_for_timeout(50000)  # wait for JS content to load
+        page.wait_for_timeout(2000)  # wait for JS content to load
         html = page.content()
 
         with open("upwork_loggedin.html", "w", encoding="utf-8") as f:
